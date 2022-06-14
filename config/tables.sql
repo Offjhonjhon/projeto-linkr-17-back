@@ -6,18 +6,6 @@ CREATE TABLE users (
   "createdAt" TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE sessions (
-   id SERIAL PRIMARY KEY,
-   token TEXT NOT NULL UNIQUE,
-   "userId" INTEGER NOT NULL REFERENCES users(id),
-   "createdAt" TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE tags (
-  id SERIAL PRIMARY KEY,
-  tag TEXT NOT NULL UNIQUE
-);
-
 CREATE TABLE publications (
   id SERIAL PRIMARY KEY,
   "userId" INTEGER NOT NULL REFERENCES users(id),
@@ -26,7 +14,12 @@ CREATE TABLE publications (
   "createdAt" TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE publicationsTags (
+CREATE TABLE tags (
+  id SERIAL PRIMARY KEY,
+  tag TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE "publicationsTags" (
     id SERIAL PRIMARY KEY,
     "publicationId" INTEGER NOT NULL REFERENCES publications(id),
     "tagId" INTEGER NOT NULL REFERENCES tags(id)
@@ -34,6 +27,13 @@ CREATE TABLE publicationsTags (
 
 CREATE TABLE likes (
     id SERIAL PRIMARY KEY,
-     "userId" INTEGER NOT NULL REFERENCES users(id),
+    "userId" INTEGER NOT NULL REFERENCES users(id),
     "publicationId" INTEGER NOT NULL REFERENCES publications(id)
-)
+);
+
+CREATE TABLE sessions (
+   id SERIAL PRIMARY KEY,
+   token TEXT NOT NULL UNIQUE,
+   "userId" INTEGER NOT NULL REFERENCES users(id),
+   "createdAt" TIMESTAMP DEFAULT NOW()
+);
