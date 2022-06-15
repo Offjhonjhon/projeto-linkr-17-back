@@ -8,13 +8,14 @@ export async function signUp(req, res) {
     const hash = await bcrypt.hash(password, 10);
     
     try {
-        const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+        const result = await connection.query('SELECT * FROM users WHERE email = $1', [email]);
         if (result.rows[0]) return res.status(409).send({error: "Email já cadastrado"});
 
-        await db.query(`INSERT INTO users(email, password, username, picture) VALUES ($1, $2, $3, $4)`, [email, hash, username, picture]);
+        await connection.query('INSERT INTO users(email, password, name, avatar) VALUES ($1, $2, $3, $4)', [email, hash, username, picture]);
 
         res.sendStatus(201);
     } catch (error) {
+        console.log(error)
         res.sendStatus(500);
     }
 }
