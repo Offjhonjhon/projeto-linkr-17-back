@@ -1,9 +1,9 @@
 import { Router } from "express"
-import { getUserProfile, goToProfile } from "../controllers/usersProfileController.js"
+import { getUserProfile, searchProfile } from "../controllers/usersProfileController.js"
 
 const usersProfileRouter = Router()
 
-usersProfileRouter.get("/search", goToProfile)
+usersProfileRouter.get("/search", searchProfile)
 usersProfileRouter.get("/user/:id", getUserProfile)
 
 export default usersProfileRouter

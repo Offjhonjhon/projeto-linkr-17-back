@@ -1,6 +1,6 @@
 import connection from "../config/db.js"
 
-export async function goToProfile(req,res){
+export async function searchProfile(req,res){
     const search = req.body
     try{
         const {rows} = await connection.query('SELECT id, name, avatar FROM users WHERE LOWER(name) LIKE LOWER($1)',[search.name + "%" ])
