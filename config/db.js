@@ -15,7 +15,6 @@ if(process.env.MODE === "PROD") {
   }
 }
 
-
-const connection = new Pool(databaseConfig);
+const connection = new Pool(configDatabase);
 
 export default connection;
