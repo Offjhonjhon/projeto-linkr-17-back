@@ -1,5 +1,8 @@
 import joi from "joi";
 
 export const userSchema = joi.object({
-    name: joi.number().integer().required()
+    email: joi.string().email().required(),
+    password: joi.string().required(),
+    username: joi.string().required(),
+    picture: joi.string().uri().required()
 });
