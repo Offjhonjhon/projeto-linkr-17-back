@@ -1,6 +1,6 @@
 import connection from "../config/db.js";
 
-export async function getUserLikes(req, res) {
+export async function getAllLikes(req, res) {
     const { publicationId } = req.body;
     const userId = 1; //userId vai ser passado pelo res.locals no middleware de validação do token
     let findUser = null;
