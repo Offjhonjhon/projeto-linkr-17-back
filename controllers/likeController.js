@@ -2,8 +2,8 @@ import connection from "../config/db.js";
 
 export async function getUserLikes(req, res) {
     const { publicationId } = req.body;
-    const userId = 1; //userId vai ser passado pelo res.locals no middleware de validação o token
-    let findUser = false;
+    const userId = 1; //userId vai ser passado pelo res.locals no middleware de validação do token
+    let findUser = null;
 
     try { 
         const { rows } = await connection.query(`
@@ -13,14 +13,14 @@ export async function getUserLikes(req, res) {
         WHERE "publicationId" = $1`, [publicationId]);
 
         const allLikes = rows.map((row) => {
-            if (row.userId === userId) findUser = true;
-            return row.name;
+            if (row.userId === userId) findUser = row.name;
+            
+            if (row.userId !== userId) {
+                return row.name;
+            }
         });
 
-        console.log('arr', allLikes)
-        console.log('1', findUser)
-
-        res.send({isLiked: findUser, allLikes});
+        res.send({userName: findUser, allLikes});
     } catch (e) {
         console.log(e)
         res.sendStatus(500);
@@ -29,7 +29,7 @@ export async function getUserLikes(req, res) {
 
 export async function postLike(req, res) {
     const { publicationId } = req.body;
-    const userId = 1; //userId vai ser passado pelo res.locals no middleware de validação o token
+    const userId = 1; //userId vai ser passado pelo res.locals no middleware de validação do token
 
     try {
         const { rows } = await connection.query('SELECT * FROM likes WHERE "userId" = $1 AND "publicationId" = $2', [userId, publicationId]);
