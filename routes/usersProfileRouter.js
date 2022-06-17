@@ -3,7 +3,7 @@ import { getUserProfile, searchProfile } from "../controllers/usersProfileContro
 
 const usersProfileRouter = Router()
 
-usersProfileRouter.get("/search", searchProfile)
+usersProfileRouter.post("/search", searchProfile)
 usersProfileRouter.get("/user/:id", getUserProfile)
 
 export default usersProfileRouter
