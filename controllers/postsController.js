@@ -35,3 +35,36 @@ export async function postsGET(req, res) {
         res.sendStatus(500);
     }
 }
+
+
+export async function publishPOST(req, res) {
+    try {
+
+        const post = req.body;
+
+        /* VALIDATION (JOI) */
+
+        const postSchema = joi.object({
+            url: joi.string().uri().required(),
+            text: joi.string()
+        });
+
+        const validation = postSchema.validate(post);
+
+        if (validation.error) {
+            console.log(`publishPOST/VALIDATION (JOI) - ${validation.error}`);
+            res.sendStatus(422);
+            return;
+        }
+
+        /* SAVE TO DATABASE */
+        
+        await connection.query('INSERT INTO users ("userId", text, link) VALUES ($1, $2, $3)', [8, post.text, post.url]);
+        res.sendStatus(201);
+        
+
+    } catch (error) {
+        console.log(`publishPOST - ${error}`);
+        res.sendStatus(500);
+    }
+}
