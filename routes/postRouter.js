@@ -1,8 +1,9 @@
 import {Router} from 'express';
-import { editPost } from '../controllers/postController.js';
+import { deletePost, editPost } from '../controllers/postController.js';
 
 const postRouter = Router();
 
-postRouter.post("/edit-post", editPost);
+postRouter.post("/post-details/edit", editPost);
+postRouter.delete("/post-details/delete/:postId", deletePost);
 
 export default postRouter;
