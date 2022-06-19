@@ -3,8 +3,14 @@ import connection from "../config/db.js";
 export async function getTrendingHashtags(req, res) {
 
     try {
-        const hashtags = await connection.query(`SELECT * FROM tags ORDER BY id DESC LIMIT 10 `);
-        res.status(200).send(hashtags.rows);
+        const trendingHashtags = await connection.query(`
+            SELECT tags.tag, COUNT(pt.tag) as "postsCount" FROM tags
+            JOIN "publicationsTags" pt ON pt.tag = tags.tag
+            GROUP BY tags.tag
+            ORDER BY "postsCount" DESC
+            LIMIT 10
+        `);
+        res.status(200).send(trendingHashtags.rows);
     }
     catch {
         res.status(500).send("Error getting hashtags");
@@ -15,11 +21,9 @@ export async function getHashtagPosts(req, res) {
 
     try {
         const posts = await connection.query(`
-            SELECT publications.* FROM publications
-            JOIN "publicationsTags" 
-            ON publications.id = "publicationsTags"."publicationId" 
-            JOIN tags 
-            ON "publicationsTags"."tagId" = tags.id
+            SELECT publications.* FROM "publicationsTags"
+            JOIN publications ON publications."publicationcode" = "publicationsTags"."publicationCode"
+            JOIN tags ON tags.tag = "publicationsTags".tag
             WHERE tags.tag = $1
         `, [req.params.tag]);
 
