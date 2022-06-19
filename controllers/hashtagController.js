@@ -1,6 +1,6 @@
 import connection from "../config/db.js";
 
-export async function getHashtags(req, res) {
+export async function getTrendingHashtags(req, res) {
 
     try {
         const hashtags = await connection.query(`SELECT * FROM tags ORDER BY id DESC LIMIT 10 `);
