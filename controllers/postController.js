@@ -2,8 +2,7 @@ import connection from "../config/db.js";
 
 export async function editPost(req, res) {
     const { publicationId, description } = req.body; 
-    const { userData } = res.locals;
-    const { userId } = userData;
+    const { userId } = res.locals;
 
     try {
         const { rowCount } = await connection.query(`UPDATE publications 
