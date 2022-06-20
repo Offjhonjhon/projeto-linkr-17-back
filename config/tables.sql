@@ -23,7 +23,7 @@ CREATE TABLE tags (
 
 CREATE TABLE "publicationsTags" (
     id SERIAL PRIMARY KEY,
-    "publicationCode" TEXT NOT NULL REFERENCES publications(publicationCode),
+    "publicationCode" TEXT NOT NULL REFERENCES publications("publicationCode"),
     "tag" TEXT NOT NULL REFERENCES tags(tag)
 );
 
