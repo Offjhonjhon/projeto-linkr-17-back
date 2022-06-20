@@ -12,9 +12,8 @@ CREATE TABLE publications (
   "userId" INTEGER NOT NULL REFERENCES users(id),
   text TEXT,
   link TEXT NOT NULL,
-  publicationCode TEXT NOT NULL UNIQUE,
+  "publicationCode" TEXT NOT NULL UNIQUE,
   "createdAt" TIMESTAMP DEFAULT NOW()
-
 );
 
 CREATE TABLE tags (
