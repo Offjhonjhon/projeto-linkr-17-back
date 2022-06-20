@@ -1,6 +1,21 @@
-import connection from "./../config/db.js";
+import connection from "../config/db.js";
 import urlMetadata from 'url-metadata';
 
+export async function editPost(req, res) {
+    const { publicationId, description } = req.body;
+    const userId = 2;
+
+    try {
+        await connection.query(`UPDATE publications 
+                                SET text= $1
+                                WHERE id = $2 AND "userId" = $3`,
+                                [description, publicationId, userId]);
+        res.sendStatus(200);
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(500);
+    }
+}
 
 export async function postsGET(req, res) {
     try {
@@ -59,7 +74,7 @@ export async function publishPOST(req, res) {
 
         /* SAVE TO DATABASE */
         
-        await connection.query('INSERT INTO users ("userId", text, link) VALUES ($1, $2, $3)', [8, post.text, post.url]);
+        await connection.query('INSERT INTO users ("userId", text, link) VALUES ($1, $2, $3)', [res.locals.userId, post.text, post.url]);
         res.sendStatus(201);
         
 

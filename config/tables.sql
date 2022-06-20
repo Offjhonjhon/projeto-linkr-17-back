@@ -3,6 +3,7 @@ CREATE TABLE users (
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
+  avatar TEXT NOT NULL,
   "createdAt" TIMESTAMP DEFAULT NOW()
 );
 
@@ -11,7 +12,9 @@ CREATE TABLE publications (
   "userId" INTEGER NOT NULL REFERENCES users(id),
   text TEXT,
   link TEXT NOT NULL,
+  publicationCode TEXT NOT NULL UNIQUE,
   "createdAt" TIMESTAMP DEFAULT NOW()
+
 );
 
 CREATE TABLE tags (
@@ -21,8 +24,8 @@ CREATE TABLE tags (
 
 CREATE TABLE "publicationsTags" (
     id SERIAL PRIMARY KEY,
-    "publicationId" INTEGER NOT NULL REFERENCES publications(id),
-    "tagId" INTEGER NOT NULL REFERENCES tags(id)
+    "publicationCode" TEXT NOT NULL REFERENCES publications(publicationCode),
+    "tag" TEXT NOT NULL REFERENCES tags(tag)
 );
 
 CREATE TABLE likes (
