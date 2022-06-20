@@ -1,6 +1,7 @@
 import connection from "../config/db.js";
 import urlMetadata from 'url-metadata';
 
+
 export async function editPost(req, res) {
     const { publicationId, description } = req.body;
     const userId = 2;
@@ -15,6 +16,7 @@ export async function editPost(req, res) {
         console.log(e);
         res.sendStatus(500);
     }
+
 }
 
 export async function postsGET(req, res) {

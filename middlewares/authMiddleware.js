@@ -1,5 +1,7 @@
 import {userSchema} from "../schemas/userSchema.js";
+
 import jwt from 'jsonwebtoken';
+
 
 export function validateUser(req, res, next) {
     const user = req.body;
@@ -8,6 +10,7 @@ export function validateUser(req, res, next) {
     if (error) return res.status(422).send(error.details.map((d) => d.message));
 
     next();
+
 }
 
 export async function verifyToken(req, res, next) {
