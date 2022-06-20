@@ -1,5 +1,6 @@
 import connection from "../config/db.js";
 import urlMetadata from 'url-metadata';
+import joi from 'joi';
 
 
 export async function editPost(req, res) {
@@ -63,7 +64,8 @@ export async function publishPOST(req, res) {
 
         const postSchema = joi.object({
             url: joi.string().uri().required(),
-            text: joi.string()
+            text: joi.string(),
+            publicationCode: joi.string().required()
         });
 
         const validation = postSchema.validate(post);
@@ -76,7 +78,7 @@ export async function publishPOST(req, res) {
 
         /* SAVE TO DATABASE */
 
-        await connection.query('INSERT INTO users ("userId", text, link, "publicationCode") VALUES ($1, $2, $3, $5)', [res.locals.userId, post.text, post.url, post.publicationCode]);
+        await connection.query('INSERT INTO publications ("userId", text, link, "publicationCode") VALUES ($1, $2, $3, $4)', [res.locals.userId, post.text, post.url, post.publicationCode]);
         res.sendStatus(201);
 
 
