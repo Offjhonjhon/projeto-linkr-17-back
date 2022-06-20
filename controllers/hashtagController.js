@@ -1,7 +1,6 @@
 import connection from "../config/db.js";
 
 export async function getTrendingHashtags(req, res) {
-
     try {
         const trendingHashtags = await connection.query(`
             SELECT tags.tag, COUNT(pt.tag) as "postsCount" FROM tags
