@@ -12,7 +12,7 @@ CREATE TABLE publications (
   "userId" INTEGER NOT NULL REFERENCES users(id),
   text TEXT,
   link TEXT NOT NULL,
-  publicationCode TEXT NOT NULL UNIQUE,
+  "publicationCode" TEXT NOT NULL UNIQUE,
   "createdAt" TIMESTAMP DEFAULT NOW()
 
 );
@@ -24,7 +24,7 @@ CREATE TABLE tags (
 
 CREATE TABLE "publicationsTags" (
     id SERIAL PRIMARY KEY,
-    "publicationCode" TEXT NOT NULL REFERENCES publications(publicationCode),
+    "publicationCode" TEXT NOT NULL REFERENCES publications("publicationCode"),
     "tag" TEXT NOT NULL REFERENCES tags(tag)
 );
 
