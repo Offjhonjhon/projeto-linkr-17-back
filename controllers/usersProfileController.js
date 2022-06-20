@@ -19,7 +19,8 @@ export async function getUserProfile(req, res) {
             const posts = result.rows
     
             if (posts.length === 0) {
-                res.send("Empty");
+                const {rows} = await connection.query('SELECT users.name FROM users WHERE id=$1',[id])
+                res.send({status:"Empty", name: rows[0].name});
                 return;
             }
     
@@ -35,6 +36,7 @@ export async function getUserProfile(req, res) {
                     answer[index].description = metadata.description;
                     answer[index].url = post.link;
                     answer[index].image = metadata.image;
+                    answer[index].status = "Filled"
                     if (!answer.filter(e => !e.name).length) res.send(answer);
                 })
             })
