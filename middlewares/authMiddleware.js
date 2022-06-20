@@ -23,7 +23,6 @@ export async function verifyToken(req, res, next) {
             res.sendStatus(401);
             return;
         }
-        
         const token = authorization.replace('Bearer ', '');
         if (!token) {
             console.log(`verifyToken/IS THERE TOKEN?`);
