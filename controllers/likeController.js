@@ -2,7 +2,7 @@ import connection from "../config/db.js";
 
 export async function getAllLikes(req, res) {
     const { publicationId } = req.body;
-    const userId = 1; //userId vai ser passado pelo res.locals no middleware de validação do token
+    const { userId } = res.locals;
     let findUser = null;
 
     try { 
@@ -29,11 +29,11 @@ export async function getAllLikes(req, res) {
 
 export async function postLike(req, res) {
     const { publicationId } = req.body;
-    const userId = 1; //userId vai ser passado pelo res.locals no middleware de validação do token
+    const { userId } = res.locals;
 
     try {
         const { rows } = await connection.query('SELECT * FROM likes WHERE "userId" = $1 AND "publicationId" = $2', [userId, publicationId]);
-        
+        console.log(rows)
         if (rows.length === 0) {
             await connection.query('INSERT INTO likes ("userId", "publicationId") VALUES ($1, $2)', [userId, publicationId]);
             return res.send("likeSuccess");
