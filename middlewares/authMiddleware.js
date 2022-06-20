@@ -19,7 +19,6 @@ export async function verifyToken(req, res, next) {
         /* IS THERE TOKEN? */
 
         const { authorization } = req.headers
-        console.log(authorization)
 
         if (!authorization) {
             console.log(`verifyToken/IS THERE TOKEN?`);
