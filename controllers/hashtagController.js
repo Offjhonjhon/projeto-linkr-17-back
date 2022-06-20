@@ -32,3 +32,38 @@ export async function getHashtagPosts(req, res) {
         res.status(500).send("Error getting posts");
     }
 }
+
+export async function postTag(req, res) {
+    const { publicationCode, tag } = req.body;
+
+    try {
+        const { rows } = await connection.query(`
+            SELECT * FROM tags WHERE tag = $1
+        `, [tag]);
+        if (rows.length === 0) {
+            await connection.query(`
+                INSERT INTO tags (tag) VALUES ($1)
+            `, [tag]);
+            res.status(200).send("Tag added");
+        }
+        else {
+            res.status(200).send("Tag already exists");
+        }
+    }
+    catch {
+        res.status(500).send("Error adding tag");
+    }
+}
+
+export async function postPublicationTag(req, res) {
+    const { publicationCode, tag } = req.body;
+
+    try {
+        await connection.query(`
+            INSERT INTO "publicationsTags" ("publicationCode", "tag") VALUES ($1, $2)
+        `);
+    }
+    catch {
+        res.status(500).send("Error adding tag");
+    }
+}
