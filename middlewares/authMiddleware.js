@@ -2,7 +2,6 @@ import { userSchema } from "../schemas/userSchema.js";
 
 import jwt from 'jsonwebtoken';
 
-
 export function validateUser(req, res, next) {
     const user = req.body;
     const { error } = userSchema.validate(user);
@@ -27,7 +26,6 @@ export async function verifyToken(req, res, next) {
         }
 
         const token = authorization.replace('Bearer ', '');
-
         if (!token) {
             console.log(`verifyToken/IS THERE TOKEN?`);
             res.sendStatus(401);

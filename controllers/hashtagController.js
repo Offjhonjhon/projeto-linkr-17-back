@@ -20,36 +20,32 @@ export async function getTrendingHashtags(req, res) {
 export async function getHashtagPosts(req, res) {
 
     try {
-        const posts = await connection.query(`
-            SELECT u.avatar, u.name, p.text, p.link FROM "publicationsTags" pt
+        const data = await connection.query(`
+            SELECT u.avatar, u.id, u.name, p.text, p.link FROM "publicationsTags" pt
             JOIN publications p ON p."publicationCode" = pt."publicationCode"
             JOIN users u ON p."userId" = u.id
             JOIN tags ON tags.tag = pt.tag
             WHERE tags.tag = $1
         `, [req.params.tag]);
 
-        res.send(posts.rows);
+        const posts = data.rows;
 
-        // if (posts.length === 0) {
-        //     res.send("Empty");
-        //     return;
-        // }
+        const answer = [];
+        for (let i = 0; i < posts.length; i++) { answer.push({}) };
 
-        // const answer = [];
-        // for (let i = 0; i < posts.length; i++) { answer.push({}) };
-
-        // posts.forEach((post, index) => {
-        //     urlMetadata(post.link).then(metadata => {
-        //         answer[index].avatar = post.avatar;
-        //         answer[index].name = post.name;
-        //         answer[index].text = post.text;
-        //         answer[index].title = metadata.title;
-        //         answer[index].description = metadata.description;
-        //         answer[index].url = post.link;
-        //         answer[index].image = metadata.image;
-        //         if (!answer.filter(e => !e.name).length) res.send(answer);
-        //     })
-        // })
+        posts.forEach((post, index) => {
+            urlMetadata(post.link).then(metadata => {
+                answer[index].avatar = post.avatar;
+                answer[index].id = post.id
+                answer[index].name = post.name;
+                answer[index].text = post.text;
+                answer[index].title = metadata.title;
+                answer[index].description = metadata.description;
+                answer[index].url = post.link;
+                answer[index].image = metadata.image;
+                if (!answer.filter(e => !e.name).length) res.send(answer);
+            })
+        })
     }
     catch {
         res.status(500).send("Error getting posts");

@@ -14,6 +14,7 @@ CREATE TABLE publications (
   link TEXT NOT NULL,
   "publicationCode" TEXT NOT NULL UNIQUE,
   "createdAt" TIMESTAMP DEFAULT NOW()
+
 );
 
 CREATE TABLE tags (
