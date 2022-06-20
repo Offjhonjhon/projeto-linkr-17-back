@@ -20,9 +20,10 @@ export async function getHashtagPosts(req, res) {
 
     try {
         const posts = await connection.query(`
-            SELECT publications.* FROM "publicationsTags"
-            JOIN publications ON publications."publicationcode" = "publicationsTags"."publicationCode"
-            JOIN tags ON tags.tag = "publicationsTags".tag
+            SELECT u.avatar, u.name, p.text, p.link as url FROM "publicationsTags" pt
+            JOIN publications p ON p."publicationCode" = pt."publicationCode"
+            JOIN users u ON p."userId" = u.id
+            JOIN tags ON tags.tag = pt.tag
             WHERE tags.tag = $1
         `, [req.params.tag]);
 
@@ -33,35 +34,26 @@ export async function getHashtagPosts(req, res) {
     }
 }
 
-export async function postTag(req, res) {
+export async function postPublicationTag(req, res) {
     const { publicationCode, tag } = req.body;
-
     try {
+
         const { rows } = await connection.query(`
             SELECT * FROM tags WHERE tag = $1
         `, [tag]);
+
         if (rows.length === 0) {
             await connection.query(`
                 INSERT INTO tags (tag) VALUES ($1)
             `, [tag]);
-            res.status(200).send("Tag added");
         }
-        else {
-            res.status(200).send("Tag already exists");
-        }
-    }
-    catch {
-        res.status(500).send("Error adding tag");
-    }
-}
 
-export async function postPublicationTag(req, res) {
-    const { publicationCode, tag } = req.body;
-
-    try {
         await connection.query(`
             INSERT INTO "publicationsTags" ("publicationCode", "tag") VALUES ($1, $2)
-        `);
+        `, [publicationCode, tag]);
+
+        res.status(200).send("Tag added");
+
     }
     catch {
         res.status(500).send("Error adding tag");
