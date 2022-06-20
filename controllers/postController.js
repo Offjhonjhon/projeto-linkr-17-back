@@ -23,9 +23,8 @@ export async function editPost(req, res) {
 
 export async function deletePost(req, res) {
     const { postId } = req.params;
-    const { userData } = res.locals;
-    const { userId } = userData;
-
+    const { userId } = res.locals;
+    
     try {
         await connection.query('DELETE FROM likes WHERE "publicationId" = $1', [postId]);
         const { rowCount } = await connection.query('DELETE FROM publications WHERE "id" = $1 AND "userId" = $2', [postId, userId]);
