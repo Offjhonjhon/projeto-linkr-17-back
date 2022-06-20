@@ -25,8 +25,8 @@ export async function editPost(req, res) {
 
 export async function postsGET(req, res) {
     try {
-
-        const result = await connection.query('SELECT u.avatar, u.name, p.text, p.link FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 20');
+        
+        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 20');
         const posts = result.rows
 
         if (posts.length === 0) {
@@ -40,6 +40,7 @@ export async function postsGET(req, res) {
         posts.forEach((post, index) => {
             urlMetadata(post.link).then(metadata => {
                 answer[index].avatar = post.avatar;
+                answer[index].id = post.id
                 answer[index].name = post.name;
                 answer[index].text = post.text;
                 answer[index].title = metadata.title;
@@ -93,7 +94,6 @@ export async function publishPOST(req, res) {
 export async function deletePost(req, res) {
     const { postId } = req.params;
     const { userId } = res.locals;
-
     try {
         await connection.query('DELETE FROM likes WHERE "publicationId" = $1', [postId]);
         const { rowCount } = await connection.query('DELETE FROM publications WHERE "id" = $1 AND "userId" = $2', [postId, userId]);
