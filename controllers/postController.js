@@ -12,6 +12,8 @@ export async function editPost(req, res) {
                                 WHERE id = $2 AND "userId" = $3`,
             [description, publicationId, userId]);
 
+            console.log('count', rowCount)
+
         if (rowCount === 0) {
             return res.status(401).send("Dados inválidos!");
         }
@@ -24,9 +26,11 @@ export async function editPost(req, res) {
 }
 
 export async function postsGET(req, res) {
+    const { userId } = res.locals;
+
     try {
         
-        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 20');
+        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 20');
         const posts = result.rows
 
         if (posts.length === 0) {
@@ -47,6 +51,14 @@ export async function postsGET(req, res) {
                 answer[index].description = metadata.description;
                 answer[index].url = post.link;
                 answer[index].image = metadata.image;
+                answer[index].postId = post.postId
+
+                if (userId === post.id) {
+                    answer[index].isFromUser = true;
+                } else {
+                    answer[index].isFromUser = false;
+                }
+                
                 if (!answer.filter(e => !e.name).length) res.send(answer);
             })
         })
@@ -94,10 +106,11 @@ export async function publishPOST(req, res) {
 export async function deletePost(req, res) {
     const { postId } = req.params;
     const { userId } = res.locals;
+
     try {
         await connection.query('DELETE FROM likes WHERE "publicationId" = $1', [postId]);
         const { rowCount } = await connection.query('DELETE FROM publications WHERE "id" = $1 AND "userId" = $2', [postId, userId]);
-
+        console.log(rowCount)
         if (rowCount === 0) {
             return res.status(401).send("Dados inválidos!");
         }
