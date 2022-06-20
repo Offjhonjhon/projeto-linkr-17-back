@@ -9,7 +9,6 @@ export function validateUser(req, res, next) {
     if (error) return res.status(422).send(error.details.map((d) => d.message));
 
     next();
-
 }
 
 export async function verifyToken(req, res, next) {
@@ -24,7 +23,6 @@ export async function verifyToken(req, res, next) {
             res.sendStatus(401);
             return;
         }
-
         const token = authorization.replace('Bearer ', '');
         if (!token) {
             console.log(`verifyToken/IS THERE TOKEN?`);
