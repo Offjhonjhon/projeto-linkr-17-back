@@ -33,6 +33,7 @@ export async function postsGET(req, res) {
         const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 20');
         const posts = result.rows
 
+
         if (posts.length === 0) {
             res.send("Empty");
             return;
@@ -51,6 +52,7 @@ export async function postsGET(req, res) {
                 answer[index].description = metadata.description;
                 answer[index].url = post.link;
                 answer[index].image = metadata.image;
+
                 answer[index].postId = post.postId
 
                 if (userId === post.id) {
@@ -59,8 +61,10 @@ export async function postsGET(req, res) {
                     answer[index].isFromUser = false;
                 }
                 
+
                 if (!answer.filter(e => !e.name).length) res.send(answer);
             })
+
         })
 
 
