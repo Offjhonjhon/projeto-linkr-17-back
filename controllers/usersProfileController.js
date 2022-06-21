@@ -16,7 +16,8 @@ export async function getUserProfile(req, res) {
     const {id} = req.params
 
         try {
-            const result = await connection.query('SELECT u.avatar, u.name, p.id, p.text, p.link FROM publications p JOIN users u ON p."userId" = u.id WHERE u.id = $1 ORDER BY p."createdAt" DESC LIMIT 20',[id]);
+
+            const result = await connection.query('SELECT u.avatar, u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id WHERE u.id = $1 ORDER BY p."createdAt" DESC LIMIT 20',[id]);
             const posts = result.rows
     
             if (posts.length === 0) {
@@ -37,8 +38,10 @@ export async function getUserProfile(req, res) {
                     answer[index].description = metadata.description;
                     answer[index].url = post.link;
                     answer[index].image = metadata.image;
-                    answer[index].status = "Filled"
+                    answer[index].status = "Filled";
                     answer[index].id = post.id
+                    answer[index].postId = post.postId
+
                     if (!answer.filter(e => !e.name).length) res.send(answer);
                 })
             })
