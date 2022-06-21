@@ -27,7 +27,7 @@ export async function editPost(req, res) {
 
 export async function postsGET(req, res) {
     const { userId } = res.locals;
-
+    
     try {
         
         const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 20');
@@ -106,6 +106,8 @@ export async function publishPOST(req, res) {
 export async function deletePost(req, res) {
     const { postId } = req.params;
     const { userId } = res.locals;
+
+    console.log(userId, postId)
 
     try {
         await connection.query('DELETE FROM likes WHERE "publicationId" = $1', [postId]);
