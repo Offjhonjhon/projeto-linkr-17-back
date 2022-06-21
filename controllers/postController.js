@@ -12,8 +12,6 @@ export async function editPost(req, res) {
                                 WHERE id = $2 AND "userId" = $3`,
             [description, publicationId, userId]);
 
-            console.log('count', rowCount)
-
         if (rowCount === 0) {
             return res.status(401).send("Dados inválidos!");
         }
