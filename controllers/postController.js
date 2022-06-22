@@ -25,10 +25,11 @@ export async function editPost(req, res) {
 
 export async function postsGET(req, res) {
     const { userId } = res.locals;
+    const { page } = req.params;
     
     try {
         
-        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 20');
+        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 10 OFFSET $1', [page*10]);
         const posts = result.rows
 
 
