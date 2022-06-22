@@ -1,11 +1,11 @@
 import connection from "../config/db.js";
 
 export async function getAllReposts(req, res) {
-    const {publicationId} = req.body;
-    const {userId} = reqres.locals;
+    const {id} = req.params;
 
     try {
-        res.sendStatus(501);
+        const {rows} = await connection.query('SELECT * FROM reposts WHERE "publicationId" = $1', [id]);
+        res.status(200).send({publications: rows, count: rows.length});
     } catch(e) {
         console.log(e);
         res.sendStatus(500);
