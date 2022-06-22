@@ -40,3 +40,9 @@ CREATE TABLE sessions (
    "userId" INTEGER NOT NULL REFERENCES users(id),
    "createdAt" TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE reposts (
+    id SERIAL PRIMARY KEY,
+    "userId" INTEGER NOT NULL REFERENCES users(id),
+    "publicationId" INTEGER NOT NULL REFERENCES publications(id)
+);
