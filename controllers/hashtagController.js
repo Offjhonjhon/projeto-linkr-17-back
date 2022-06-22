@@ -43,7 +43,6 @@ export async function getHashtagPosts(req, res) {
                 answer[index].description = metadata.description;
                 answer[index].url = post.link;
                 answer[index].image = metadata.image;
-                console.log(answer);
                 if (!answer.filter(e => !e.name).length) res.send(answer);
             })
         })

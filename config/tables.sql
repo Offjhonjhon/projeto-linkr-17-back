@@ -40,3 +40,9 @@ CREATE TABLE sessions (
    "userId" INTEGER NOT NULL REFERENCES users(id),
    "createdAt" TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE follow (
+  id SERIAL PRIMARY KEY,
+  "userId" INTEGER NOT NULL REFERENCES users(id),
+  "followUserId" INTEGER NOT NULL REFERENCES users(id)
+);
