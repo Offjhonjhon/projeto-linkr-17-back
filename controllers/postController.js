@@ -12,6 +12,7 @@ export async function editPost(req, res) {
                                 WHERE id = $2 AND "userId" = $3`,
             [description, publicationId, userId]);
 
+
         if (rowCount === 0) {
             return res.status(401).send("Dados inválidos!");
         }
@@ -31,7 +32,6 @@ export async function postsGET(req, res) {
         const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 20');
         const posts = result.rows
 
-
         if (posts.length === 0) {
             res.send("Empty");
             return;
@@ -50,7 +50,6 @@ export async function postsGET(req, res) {
                 answer[index].description = metadata.description;
                 answer[index].url = post.link;
                 answer[index].image = metadata.image;
-
                 answer[index].postId = post.postId
 
                 if (userId === post.id) {
@@ -59,10 +58,8 @@ export async function postsGET(req, res) {
                     answer[index].isFromUser = false;
                 }
                 
-
                 if (!answer.filter(e => !e.name).length) res.send(answer);
             })
-
         })
 
 
@@ -109,12 +106,10 @@ export async function deletePost(req, res) {
     const { postId } = req.params;
     const { userId } = res.locals;
 
-    console.log(userId, postId)
-
     try {
         await connection.query('DELETE FROM likes WHERE "publicationId" = $1', [postId]);
         const { rowCount } = await connection.query('DELETE FROM publications WHERE "id" = $1 AND "userId" = $2', [postId, userId]);
-        console.log(rowCount)
+        
         if (rowCount === 0) {
             return res.status(401).send("Dados inválidos!");
         }
@@ -122,6 +117,6 @@ export async function deletePost(req, res) {
         res.sendStatus(200);
     } catch (e) {
         console.log(e)
-        res.sendStatus(500)
+        res.sendStatus(500);
     }
 }

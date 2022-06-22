@@ -31,7 +31,7 @@ export async function signIn(req, res) {
         const token = jwt.sign(data, process.env.JWT_SECRET, {expiresIn: "1d"});
         
         await connection.query('INSERT INTO sessions (token, "userId") VALUES ($1, $2)', [token, user.rows[0].id]);
-        return res.status(200).send({avatar: user.rows[0].avatar, token});
+        return res.status(200).send({avatar: user.rows[0].avatar, token, userId:  user.rows[0].id});
     } catch(e) {
         console.log(e);
         res.sendStatus(500);
