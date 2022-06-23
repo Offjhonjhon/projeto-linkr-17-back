@@ -4,7 +4,7 @@ import {verifyToken} from '../middlewares/authMiddleware.js';
 
 const postRouter = Router();
 
-postRouter.get("/posts/page/:page", verifyToken, postsGET);
+postRouter.get("/posts/page/:page/:lastUpdateTime", verifyToken, postsGET);
 postRouter.post("/publish", verifyToken, publishPOST);
 postRouter.post("/post/edit",  verifyToken, editPost);
 postRouter.delete("/post/delete/:postId", verifyToken, deletePost);

@@ -1,6 +1,7 @@
 import connection from "../config/db.js";
 import urlMetadata from 'url-metadata';
 import joi from 'joi';
+import dayjs from "dayjs";
 
 export async function editPost(req, res) {
     const { publicationId, description } = req.body;
@@ -25,13 +26,12 @@ export async function editPost(req, res) {
 
 export async function postsGET(req, res) {
     const { userId } = res.locals;
-    const { page } = req.params;
+    const { page, lastUpdateTime } = req.params;
     
     try {
-        
-        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 10 OFFSET $1', [page*10]);
+        const time = lastUpdateTime === "0" ? dayjs().add(1, 'day').format("YYYY-MM-DD HH:mm:ss") : dayjs(lastUpdateTime).add(1, 'second').format("YYYY-MM-DD HH:mm:ss");
+        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId", p."createdAt" FROM publications p JOIN users u ON p."userId" = u.id WHERE p."createdAt" <= $1 ORDER BY p."createdAt" DESC LIMIT 10 OFFSET $2', [time, page*10]);
         const posts = result.rows
-
 
         if (posts.length === 0) {
             res.send("Empty");
@@ -51,6 +51,7 @@ export async function postsGET(req, res) {
                 answer[index].description = metadata.description;
                 answer[index].url = post.link;
                 answer[index].image = metadata.image;
+                if (index === 0) {answer[0].createdAt = post.createdAt};
 
                 answer[index].postId = post.postId
 
