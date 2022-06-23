@@ -46,3 +46,9 @@ CREATE TABLE reposts (
     "userId" INTEGER NOT NULL REFERENCES users(id),
     "publicationId" INTEGER NOT NULL REFERENCES publications(id)
 );
+
+CREATE TABLE follow (
+  id SERIAL PRIMARY KEY,
+  "userId" INTEGER NOT NULL REFERENCES users(id),
+  "followUserId" INTEGER NOT NULL REFERENCES users(id)
+);
