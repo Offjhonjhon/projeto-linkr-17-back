@@ -96,6 +96,29 @@ export async function postsGET(req, res) {
     }
 }
 
+export async function newPostsGET(req, res) {
+
+    const { lastUpdateTime } = req.params;
+    
+    try {
+
+        if (lastUpdateTime === "0") {
+            res.send("0");
+            return;
+        }
+
+        const time = dayjs(lastUpdateTime).add(1, 'second').format("YYYY-MM-DD HH:mm:ss");
+        const result = await connection.query('SELECT COUNT(*) FROM publications WHERE "createdAt" >= $1', [time]);
+
+        
+        res.send(result.rows[0].count)
+
+    } catch (error) {
+        console.log(`newPostsGET - ${error}`);
+        res.sendStatus(500);
+    }
+}
+
 export async function publishPOST(req, res) {
     try {
 
