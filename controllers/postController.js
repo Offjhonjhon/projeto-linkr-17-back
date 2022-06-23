@@ -62,7 +62,29 @@ export async function postsGET(req, res) {
                 }
                 
 
-                if (!answer.filter(e => !e.name).length) res.send(answer);
+                if (!(answer.filter(e => !e.name).length)) res.send(answer);
+            },
+            error => {
+                answer[index].avatar = post.avatar;
+                answer[index].id = post.id
+                answer[index].name = post.name;
+                answer[index].text = post.text;
+                answer[index].title = "";
+                answer[index].description = "";
+                answer[index].url = post.link;
+                answer[index].image = "";
+                if (index === 0) {answer[0].createdAt = post.createdAt};
+
+                answer[index].postId = post.postId
+
+                if (userId === post.id) {
+                    answer[index].isFromUser = true;
+                } else {
+                    answer[index].isFromUser = false;
+                }
+                
+
+                if (!(answer.filter(e => !e.name).length)) res.send(answer);
             })
 
         })
