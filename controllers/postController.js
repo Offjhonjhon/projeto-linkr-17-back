@@ -13,6 +13,7 @@ export async function editPost(req, res) {
                                 WHERE id = $2 AND "userId" = $3`,
             [description, publicationId, userId]);
 
+
         if (rowCount === 0) {
             return res.status(401).send("Dados inválidos!");
         }
@@ -83,10 +84,8 @@ export async function postsGET(req, res) {
                     answer[index].isFromUser = false;
                 }
                 
-
-                if (!(answer.filter(e => !e.name).length)) res.send(answer);
+                if (!answer.filter(e => !e.name).length) res.send(answer);
             })
-
         })
 
 
@@ -156,12 +155,10 @@ export async function deletePost(req, res) {
     const { postId } = req.params;
     const { userId } = res.locals;
 
-    console.log(userId, postId)
-
     try {
         await connection.query('DELETE FROM likes WHERE "publicationId" = $1', [postId]);
         const { rowCount } = await connection.query('DELETE FROM publications WHERE "id" = $1 AND "userId" = $2', [postId, userId]);
-        console.log(rowCount)
+        
         if (rowCount === 0) {
             return res.status(401).send("Dados inválidos!");
         }
@@ -169,6 +166,6 @@ export async function deletePost(req, res) {
         res.sendStatus(200);
     } catch (e) {
         console.log(e)
-        res.sendStatus(500)
+        res.sendStatus(500);
     }
 }
