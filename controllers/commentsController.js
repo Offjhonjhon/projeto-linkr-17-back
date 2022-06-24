@@ -13,7 +13,7 @@ export async function getCommentsQuantity(req, res) {
         res.status(200).send(numberOfComments.rows[0].count);
     }
     catch (error) {
-        res.sendStatus(500).send(error)
+        res.status(500).send(error)
     }
 }
 
