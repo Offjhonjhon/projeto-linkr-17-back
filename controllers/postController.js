@@ -30,9 +30,20 @@ export async function postsGET(req, res) {
     const { page, lastUpdateTime } = req.params;
     
     try {
+        const followers = await connection.query('SELECT * FROM follow WHERE "userId" = $1', [userId]);
+        
+        if (followers.rows.length === 0) {
+            return res.send("No-followers");
+        }
+
         const time = lastUpdateTime === "0" ? dayjs().add(1, 'day').format("YYYY-MM-DD HH:mm:ss") : dayjs(lastUpdateTime).add(1, 'second').format("YYYY-MM-DD HH:mm:ss");
-        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId", p."createdAt" FROM publications p JOIN users u ON p."userId" = u.id WHERE p."createdAt" <= $1 ORDER BY p."createdAt" DESC LIMIT 10 OFFSET $2', [time, page*10]);
-        const posts = result.rows
+        const result = await connection.query(`SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId", p."createdAt" 
+                                               FROM publications p 
+                                               JOIN follow f ON f."followUserId" = p."userId"
+                                               JOIN users u ON f."followUserId" = u.id 
+                                               WHERE p."createdAt" <= $1 AND f."userId" = $2
+                                               ORDER BY p."createdAt" DESC LIMIT 10 OFFSET $3`, [time, userId, page*10]);
+        const posts = result.rows;
 
         if (posts.length === 0) {
             res.send("Empty");
