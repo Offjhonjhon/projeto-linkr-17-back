@@ -13,6 +13,8 @@ export async function getAllReposts(req, res) {
 }
 
 export async function getInfos(req, res) {
+    const {userId} = res.locals;
+
     try {
         const {rows} = await connection.query(`
             SELECT u1.name as "userRepost", p."userId",
@@ -21,7 +23,9 @@ export async function getInfos(req, res) {
             JOIN publications p ON r."publicationId" = p.id
             JOIN users u1 ON r."userId" = u1.id
             JOIN users u2 ON p."userId" = u2.id
-        `);
+            JOIN follow f ON f."followUserId" = r."userId"
+            WHERE r."userId" = $1
+        `, [userId]);
         res.status(200).send(rows);
     } catch(e) {
         console.log(e);
