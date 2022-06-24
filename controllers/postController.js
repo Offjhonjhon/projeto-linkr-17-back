@@ -1,6 +1,7 @@
 import connection from "../config/db.js";
 import urlMetadata from 'url-metadata';
 import joi from 'joi';
+import dayjs from "dayjs";
 
 export async function editPost(req, res) {
     const { publicationId, description } = req.body;
@@ -26,11 +27,11 @@ export async function editPost(req, res) {
 
 export async function postsGET(req, res) {
     const { userId } = res.locals;
-    const { page } = req.params;
+    const { page, lastUpdateTime } = req.params;
     
     try {
-        
-        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 10 OFFSET $1', [page*10]);
+        const time = lastUpdateTime === "0" ? dayjs().add(1, 'day').format("YYYY-MM-DD HH:mm:ss") : dayjs(lastUpdateTime).add(1, 'second').format("YYYY-MM-DD HH:mm:ss");
+        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId", p."createdAt" FROM publications p JOIN users u ON p."userId" = u.id WHERE p."createdAt" <= $1 ORDER BY p."createdAt" DESC LIMIT 10 OFFSET $2', [time, page*10]);
         const posts = result.rows
 
         if (posts.length === 0) {
@@ -51,6 +52,30 @@ export async function postsGET(req, res) {
                 answer[index].description = metadata.description;
                 answer[index].url = post.link;
                 answer[index].image = metadata.image;
+                if (index === 0) {answer[0].createdAt = post.createdAt};
+
+                answer[index].postId = post.postId
+
+                if (userId === post.id) {
+                    answer[index].isFromUser = true;
+                } else {
+                    answer[index].isFromUser = false;
+                }
+                
+
+                if (!(answer.filter(e => !e.name).length)) res.send(answer);
+            },
+            error => {
+                answer[index].avatar = post.avatar;
+                answer[index].id = post.id
+                answer[index].name = post.name;
+                answer[index].text = post.text;
+                answer[index].title = "";
+                answer[index].description = "";
+                answer[index].url = post.link;
+                answer[index].image = "";
+                if (index === 0) {answer[0].createdAt = post.createdAt};
+
                 answer[index].postId = post.postId
 
                 if (userId === post.id) {
@@ -66,6 +91,29 @@ export async function postsGET(req, res) {
 
     } catch (error) {
         console.log(`postsGET - ${error}`);
+        res.sendStatus(500);
+    }
+}
+
+export async function newPostsGET(req, res) {
+
+    const { lastUpdateTime } = req.params;
+    
+    try {
+
+        if (lastUpdateTime === "0") {
+            res.send("0");
+            return;
+        }
+
+        const time = dayjs(lastUpdateTime).add(1, 'second').format("YYYY-MM-DD HH:mm:ss");
+        const result = await connection.query('SELECT COUNT(*) FROM publications WHERE "createdAt" >= $1', [time]);
+
+        
+        res.send(result.rows[0].count)
+
+    } catch (error) {
+        console.log(`newPostsGET - ${error}`);
         res.sendStatus(500);
     }
 }
