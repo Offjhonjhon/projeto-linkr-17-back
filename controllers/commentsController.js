@@ -21,28 +21,33 @@ export async function getComments(req, res) {
     const { id } = req.params;
     try {
         const comments = await connection.query(`
-            SELECT * FROM comments
-            WHERE "publicationId" = ($1)
+        SELECT comments.*, u.name, u.avatar FROM comments
+        JOIN users u ON u.id = comments."userId"
+        WHERE "publicationId" = ($1)
             ;
         `, [id]);
 
         res.status(200).send(comments.rows);
     }
-    catch {
+    catch (error) {
         res.status(500).send(error)
     }
 }
 
 export async function postComment(req, res) {
-    const { postId, comment } = req.params;
+    const { postId, comment } = req.body;
     const { userId } = res.locals;
+
     try {
         await connection.query(`
         INSERT INTO comments ("comment", "userId", "publicationId")
         VALUES ($1,$2,$3)
-        `, [comment, userId, postId])
+        ;`, [comment, userId, postId]);
+
+        res.status(200);
     }
-    catch {
+    catch (error) {
+        console.log(error)
         res.sendStatus(500).send(error);
     }
 }

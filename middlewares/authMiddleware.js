@@ -39,8 +39,6 @@ export async function verifyToken(req, res, next) {
                 res.sendStatus(401);
                 return;
             }
-
-
             res.locals.userId = decoded.userId;
             next();
         });

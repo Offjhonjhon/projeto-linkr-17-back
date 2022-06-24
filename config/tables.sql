@@ -41,8 +41,21 @@ CREATE TABLE sessions (
    "createdAt" TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE reposts (
+    id SERIAL PRIMARY KEY,
+    "userId" INTEGER NOT NULL REFERENCES users(id),
+    "publicationId" INTEGER NOT NULL REFERENCES publications(id)
+);
+
 CREATE TABLE follow (
   id SERIAL PRIMARY KEY,
   "userId" INTEGER NOT NULL REFERENCES users(id),
   "followUserId" INTEGER NOT NULL REFERENCES users(id)
 );
+
+CREATE TABLE comments {
+  id SERIAL PRIMARY KEY,
+  "comment": TEXT NOT NULL,
+  "userId" INTEGER NOT NULL REFERENCES users(id),
+  "publicationId" INTEGER NOT NULL REFERENCES publications(id)
+}
