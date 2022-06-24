@@ -24,6 +24,7 @@ export async function getComments(req, res) {
         SELECT comments.*, u.name, u.avatar FROM comments
         JOIN users u ON u.id = comments."userId"
         WHERE "publicationId" = ($1)
+        ORDER BY comments.id DESC
             ;
         `, [id]);
 

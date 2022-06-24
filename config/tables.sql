@@ -53,9 +53,9 @@ CREATE TABLE follow (
   "followUserId" INTEGER NOT NULL REFERENCES users(id)
 );
 
-CREATE TABLE comments {
+CREATE TABLE comments (
   id SERIAL PRIMARY KEY,
-  "comment": TEXT NOT NULL,
+  "comment" TEXT NOT NULL,
   "userId" INTEGER NOT NULL REFERENCES users(id),
   "publicationId" INTEGER NOT NULL REFERENCES publications(id)
-}
+)
