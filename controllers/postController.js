@@ -26,10 +26,10 @@ export async function editPost(req, res) {
 export async function postsGET(req, res) {
     const { userId } = res.locals;
     const { page } = req.params;
-    
+
     try {
-        
-        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 10 OFFSET $1', [page*10]);
+
+        const result = await connection.query('SELECT u.avatar, u.id ,u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id ORDER BY p."createdAt" DESC LIMIT 10 OFFSET $1', [page * 10]);
         const posts = result.rows
 
 
@@ -59,7 +59,7 @@ export async function postsGET(req, res) {
                 } else {
                     answer[index].isFromUser = false;
                 }
-                
+
 
                 if (!answer.filter(e => !e.name).length) res.send(answer);
             })
@@ -96,7 +96,7 @@ export async function publishPOST(req, res) {
 
         /* SAVE TO DATABASE */
 
-        await connection.query('INSERT INTO publications ("userId", text, link, "publicationCode") VALUES ($1, $2, $3, $4)', [res.locals.userId, post.text, post.url, post.publicationCode]);
+        await connection.query('INSERT INTO publications ("userId", text, link, "publicationCode") VALUES ($1, $2, $3, $4) RETURNING id', [res.locals.userId, post.text, post.url, post.publicationCode]);
         res.sendStatus(201);
 
 
