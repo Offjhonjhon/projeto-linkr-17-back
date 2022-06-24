@@ -2,9 +2,20 @@ import connection from "../config/db.js"
 import urlMetadata from 'url-metadata';
 
 export async function searchProfile(req,res){
-    const search = req.body
+    const {search, userId} = req.body
     try{
         const {rows} = await connection.query('SELECT id, name, avatar FROM users WHERE LOWER(name) LIKE LOWER($1)',[search.name + "%" ])
+
+        const followed = await connection.query('SELECT "userId", "followUserId" FROM follow WHERE "userId"=$1',[userId])
+
+        rows.forEach(row => {
+            followed.rows.forEach(follow => {
+                if(row.id === follow.followUserId){
+                    row.follow = true
+                }
+            })
+        })
+        console.log(rows)
         res.status(200).send(rows)
     }catch(e){
         console.log(e)
