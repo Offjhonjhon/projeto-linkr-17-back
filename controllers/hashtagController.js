@@ -18,10 +18,13 @@ export async function getTrendingHashtags(req, res) {
 }
 
 export async function getHashtagPosts(req, res) {
+    const { userId } = res.locals;
+    const { page, lastUpdateTime } = req.params;
 
     try {
+
         const data = await connection.query(`
-            SELECT u.avatar, u.id, u.name, p.text, p.link FROM "publicationsTags" pt
+            SELECT u.avatar, u.id, u.name, p.text, p.link, p.id as "postId", p."createdAt" FROM "publicationsTags" pt
             JOIN publications p ON p."publicationCode" = pt."publicationCode"
             JOIN users u ON p."userId" = u.id
             JOIN tags ON tags.tag = pt.tag
@@ -43,8 +46,40 @@ export async function getHashtagPosts(req, res) {
                 answer[index].description = metadata.description;
                 answer[index].url = post.link;
                 answer[index].image = metadata.image;
-                if (!answer.filter(e => !e.name).length) res.send(answer);
-            })
+                if (index === 0) { answer[0].createdAt = post.createdAt };
+
+                answer[index].postId = post.postId
+
+                if (userId === post.id) {
+                    answer[index].isFromUser = true;
+                } else {
+                    answer[index].isFromUser = false;
+                }
+
+
+                if (!(answer.filter(e => !e.name).length)) res.send(answer);
+            },
+                error => {
+                    answer[index].avatar = post.avatar;
+                    answer[index].id = post.id
+                    answer[index].name = post.name;
+                    answer[index].text = post.text;
+                    answer[index].title = "";
+                    answer[index].description = "";
+                    answer[index].url = post.link;
+                    answer[index].image = "";
+                    if (index === 0) { answer[0].createdAt = post.createdAt };
+
+                    answer[index].postId = post.postId
+
+                    if (userId === post.id) {
+                        answer[index].isFromUser = true;
+                    } else {
+                        answer[index].isFromUser = false;
+                    }
+
+                    if (!answer.filter(e => !e.name).length) res.send(answer);
+                })
         })
     }
     catch {

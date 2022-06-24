@@ -21,8 +21,9 @@ export async function getComments(req, res) {
     const { id } = req.params;
     try {
         const comments = await connection.query(`
-        SELECT comments.*, u.name, u.avatar FROM comments
+        SELECT comments.*, u.name, p."userId" as "postAuthor", u.avatar FROM comments
         JOIN users u ON u.id = comments."userId"
+        JOIN publications p ON p.id = comments."publicationId"
         WHERE "publicationId" = ($1)
         ORDER BY comments.id DESC
             ;
