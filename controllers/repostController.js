@@ -12,6 +12,23 @@ export async function getAllReposts(req, res) {
     }
 }
 
+export async function getInfos(req, res) {
+    try {
+        const {rows} = await connection.query(`
+            SELECT u1.name as "userRepost", p."userId",
+            u2.avatar, p.id, p.id as "postId", u2.name, p.text, p.link 
+            FROM reposts r
+            JOIN publications p ON r."publicationId" = p.id
+            JOIN users u1 ON r."userId" = u1.id
+            JOIN users u2 ON p."userId" = u2.id
+        `);
+        res.status(200).send(rows);
+    } catch(e) {
+        console.log(e);
+        res.sendStatus(500);
+    }
+}
+
 export async function postRepost(req, res) {
     const {publicationId} = req.body;
     const {userId} = res.locals;
