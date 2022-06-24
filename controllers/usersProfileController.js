@@ -28,7 +28,7 @@ export async function getUserProfile(req, res) {
 
         try {
 
-            const result = await connection.query('SELECT u.avatar, u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id WHERE u.id = $1 ORDER BY p."createdAt" DESC LIMIT 20',[id]);
+            const result = await connection.query('SELECT u.avatar, u.id as "userId", u.name, p.text, p.link, p.id as "postId" FROM publications p JOIN users u ON p."userId" = u.id WHERE u.id = $1 ORDER BY p."createdAt" DESC LIMIT 20',[id]);
             const posts = result.rows
     
             if (posts.length === 0) {
@@ -52,6 +52,7 @@ export async function getUserProfile(req, res) {
                     answer[index].status = "Filled";
                     answer[index].id = post.id
                     answer[index].postId = post.postId
+                    answer[index].userId = post.userId
 
                     if (!answer.filter(e => !e.name).length) res.send(answer);
                 })
@@ -61,5 +62,47 @@ export async function getUserProfile(req, res) {
     } catch (error) {
         console.log(`postsGET - ${error}`);
         res.sendStatus(500);
+    }
+}
+
+export async function followUser(req, res) {
+    const { userId } = res.locals;
+    const { userPageId } = req.body;
+
+    if (userId === userPageId) {
+        res.status(401).send("Dados inválidos!")
+    }
+
+    try {
+        const { rows } = await connection.query('SELECT * FROM follow WHERE "userId" = $1 AND "followUserId" = $2', [userId, userPageId]);
+        
+        if (rows.length === 0) {
+            await connection.query('INSERT INTO follow ("userId", "followUserId") VALUES ($1, $2)', [userId, userPageId]);
+            return res.send("followed");
+        } else {
+            await connection.query('DELETE FROM follow WHERE "userId" = $1 and "followUserId" = $2', [userId, userPageId]);
+            return res.send("unfollowed");
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(500).send(e);
+    }
+}
+
+export async function checkFollow(req, res) {
+    const { userId } = res.locals;
+    const { userPageId } = req.body;
+
+    try {
+        const { rows } = await connection.query('SELECT * FROM follow WHERE "userId" = $1 AND "followUserId" = $2', [userId, userPageId]);
+
+        if (rows[0]) {
+            return res.send({status: "followed"});
+        } else {
+            return res.send({status: "not followed"});
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(500).send(e);
     }
 }
